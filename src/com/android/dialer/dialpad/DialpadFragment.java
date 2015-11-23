@@ -935,6 +935,10 @@ public class DialpadFragment extends Fragment
             public void show() {
                 final Menu menu = getMenu();
 
+                final MenuItem ConferDialerOption
+                        = menu.findItem(R.id.menu_add_to_4g_conference_call);
+                ConferDialerOption.setVisible(CallUtil.isConferDialerEnabled(getActivity()));
+
                 boolean enable = !isDigitsEmpty();
                 for (int i = 0; i < menu.size(); i++) {
                     menu.getItem(i).setEnabled(enable);
@@ -1218,8 +1222,8 @@ public class DialpadFragment extends Fragment
                     mRecipients.getText().toString().trim();
             if (isDigitsShown && isDigitsEmpty()) {
                 handleDialButtonClickWithEmptyDigits();
-            } else if (mAddParticipant && isDigitsEmpty() && mRecipients.isShown()
-                    && isRecipientEmpty()) {
+            } else if (mAddParticipant && isPhoneInUse() && isDigitsEmpty()
+                    && mRecipients.isShown() && isRecipientEmpty()) {
                 // mRecipients must be empty
                 // TODO add support for conference URI in last number dialed
                 // use ErrorDialogFragment instead? also see
@@ -1601,6 +1605,10 @@ public class DialpadFragment extends Fragment
                 return true;
             case R.id.menu_add_wait:
                 updateDialString(WAIT);
+                return true;
+            case R.id.menu_add_to_4g_conference_call:
+                getActivity().startActivity(CallUtil.getConferenceDialerIntent(
+                        mDigits.getText().toString()));
                 return true;
             default:
                 return false;
